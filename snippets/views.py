@@ -11,7 +11,7 @@ from rest_framework import permissions
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly,
+    permission_classes = [permissions.IsAuthenticated,
                           IsOwnerOrReadOnly]
 
     def perform_create(self, serializer):
@@ -21,7 +21,7 @@ class PostViewSet(viewsets.ModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly,
+    permission_classes = [permissions.IsAuthenticated,
                           IsOwnerOrReadOnly]
 
     def perform_create(self, serializer):
