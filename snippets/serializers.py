@@ -1,48 +1,31 @@
 from rest_framework import serializers
-from snippets.models import Snippet, Post
+from snippets.models import Post, Comment
 from django.contrib.auth.models import User
 
 
-class SnippetSerializer(serializers.HyperlinkedModelSerializer):
-    owner = serializers.ReadOnlyField(source='owner.username')
-    highlight = serializers.HyperlinkedIdentityField(view_name='snippet-highlight', format='html')
-
-    class Meta:
-        model = Snippet
-        fields = ['url', 'id', 'highlight', 'owner',
-                  'title', 'code', 'linenos', 'language', 'style']
-
-
 class UserSerializer(serializers.HyperlinkedModelSerializer):
-    snippets = serializers.HyperlinkedRelatedField(many=True, view_name='snippet-detail', read_only=True)
     posts = serializers.HyperlinkedRelatedField(many=True, view_name='post-detail', read_only=True)
+    comments = serializers.HyperlinkedRelatedField(many=True, view_name='comment-detail', read_only=True)
 
     class Meta:
         model = User
-        fields = ['url', 'id', 'username', 'snippets', 'posts']
+        fields = ['url', 'id', 'username', 'posts', 'comments']
 
 
-# class SnippetSerializer(serializers.ModelSerializer):
-#     owner = serializers.ReadOnlyField(source='owner.username')
-#
-#     class Meta:
-#         model = Snippet
-#         fields = ['id', 'title', 'code', 'linenos', 'language', 'style', 'owner']
+class CommentSerializer(serializers.ModelSerializer):
+
+    author = serializers.ReadOnlyField(source='author.username')
+
+    class Meta:
+        model = Comment
+        fields = ['id', 'text_comment', 'author', 'post']
 
 
 class PostSerializer(serializers.ModelSerializer):
-    owner = serializers.ReadOnlyField(source='owner.username')
-    highlight = serializers.HyperlinkedIdentityField(view_name='post-highlight', format='html')
+    author = serializers.ReadOnlyField(source='author.username')
+    comments = serializers.HyperlinkedRelatedField(many=True, view_name='comment-detail', read_only=True)
 
     class Meta:
         model = Post
-        fields = ['id', 'title', 'full_description', 'owner', 'highlight']
+        fields = ['id', 'title', 'full_description', 'author', 'comments']
 
-
-# class UserSerializer(serializers.ModelSerializer):
-#     snippets = serializers.PrimaryKeyRelatedField(many=True, queryset=Snippet.objects.all())
-#     posts = serializers.PrimaryKeyRelatedField(many=True, queryset=Post.objects.all())
-#
-#     class Meta:
-#         model = User
-#         fields = ['id', 'username', 'snippets', 'posts']
