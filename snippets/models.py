@@ -26,4 +26,3 @@ class Comment(models.Model):
 
     class Meta:
         ordering = ['created']
-
